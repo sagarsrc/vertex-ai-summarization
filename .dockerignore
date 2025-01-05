@@ -1,0 +1,42 @@
+# flyctl launch added from .gitignore
+**/.env
+**/data
+**/secrets
+**/temp
+**/.DS_Store
+**/airflow
+
+# Python
+**/*.pyc
+**/__pycache__
+**/*.pyo
+**/*.pyd
+**/.Python
+**/env
+**/venv
+**/ENV
+**/env.bak
+**/venv.bak
+**/*.egg-info
+**/dist
+**/build
+**/*.log
+**/*.sqlite3
+
+# others
+**/.vscode
+
+# flyctl launch added from .venv/.gitignore
+.venv/**/*
+
+# flyctl launch added from .venv/lib/python3.10/site-packages/debugpy/_vendored/pydevd/_pydevd_frame_eval/.gitignore
+.venv/lib/python3.10/site-packages/debugpy/_vendored/pydevd/_pydevd_frame_eval/pydevd_frame_evaluator.*.so
+.venv/lib/python3.10/site-packages/debugpy/_vendored/pydevd/_pydevd_frame_eval/pydevd_frame_evaluator.*.pyd
+.venv/lib/python3.10/site-packages/debugpy/_vendored/pydevd/_pydevd_frame_eval/pydevd_frame_evaluator.pyx
+
+# flyctl launch added from .venv/lib/python3.10/site-packages/debugpy/_vendored/pydevd/pydevd_attach_to_process/linux_and_mac/.gitignore
+.venv/lib/python3.10/site-packages/debugpy/_vendored/pydevd/pydevd_attach_to_process/linux_and_mac/attach_x86.dylib
+.venv/lib/python3.10/site-packages/debugpy/_vendored/pydevd/pydevd_attach_to_process/linux_and_mac/attach_x86_64.dylib
+.venv/lib/python3.10/site-packages/debugpy/_vendored/pydevd/pydevd_attach_to_process/linux_and_mac/attach_linux_x86.o
+.venv/lib/python3.10/site-packages/debugpy/_vendored/pydevd/pydevd_attach_to_process/linux_and_mac/attach_linux_x86_64.o
+fly.toml

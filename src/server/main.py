@@ -8,9 +8,9 @@ import json
 from typing import Optional
 from functools import lru_cache
 
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
+# load_dotenv()
 
-load_dotenv()
 app = FastAPI()
 
 
@@ -105,6 +105,12 @@ Text:
 @app.on_event("startup")
 async def startup_event():
     setup_genai()
+
+
+@app.get("/")
+async def hello() -> str:
+    """Endpoint to return a greeting message."""
+    return {"message": "Hello, this API is to showcase Vertex AI based summarization!"}
 
 
 @app.get("/summarize/{index}", response_model=SummaryResponse)
