@@ -1,4 +1,4 @@
-name: Deploy to Vertex AI Summarization to Fly.io
+name: Deploy to Fly.io
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
 
       - name: Set Fly secrets
         run: |
-          flyctl secrets set --stage "GCP_SERVICE_ACCOUNT_CREDENTIALS=$(jq -n -c "${{ secrets.GCP_SERVICE_ACCOUNT_CREDENTIALS }}")"
+          flyctl secrets set --stage "GCP_SERVICE_ACCOUNT_CREDENTIALS=${{secrets.GCP_SERVICE_ACCOUNT_CREDENTIALS}}"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
