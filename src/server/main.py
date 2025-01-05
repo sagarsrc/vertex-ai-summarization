@@ -49,6 +49,7 @@ class SummaryResponse(BaseModel):
     document: str
     generated_summary: str
     ground_truth_summary: Optional[str] = None
+    summary_source: str  # Will be either "cache" or "generated"
 
 
 @lru_cache()
@@ -101,6 +102,36 @@ Text:
     return response.text
 
 
+def get_stored_summary(client: bigquery.Client, index: int) -> Optional[str]:
+    """Fetch previously generated summary from BigQuery."""
+    query = f"""
+    SELECT generated_summary
+    FROM `{settings.PROJECT_ID}.{settings.DATASET_ID}.generated_summaries`
+    WHERE index = {index}
+    LIMIT 1
+    """
+    results = client.query(query).result()
+    for row in results:
+        return row.generated_summary
+    return None
+
+
+def store_generated_summary(client: bigquery.Client, index: int, summary: str):
+    """Store generated summary in BigQuery."""
+    table_id = f"{settings.PROJECT_ID}.{settings.DATASET_ID}.generated_summaries"
+    rows_to_insert = [
+        {
+            "index": index,
+            "id": index,  # Using index as id for simplicity
+            "generated_summary": summary,
+        }
+    ]
+
+    errors = client.insert_rows_json(table_id, rows_to_insert)
+    if errors:
+        raise Exception(f"Error inserting rows: {errors}")
+
+
 # Initialize clients at startup
 @app.on_event("startup")
 async def startup_event():
@@ -115,24 +146,30 @@ async def hello() -> str:
 
 @app.get("/summarize/{index}", response_model=SummaryResponse)
 async def summarize_document(index: int):
-    """Endpoint to fetch document and generate summary."""
+    """Endpoint to fetch document and generate/retrieve summary."""
     try:
-        # Get BigQuery client
         client = get_bigquery_client()
 
         # Fetch document from BigQuery
         document, ground_truth_summary = get_document_by_index(client, index)
-
         if not document:
             raise HTTPException(status_code=404, detail="Document not found")
 
-        # Generate summary using GenerativeAI
-        generated_summary = generate_summary(document)
+        # Check if summary already exists
+        if stored_summary := get_stored_summary(client, index):
+            generated_summary = stored_summary
+            summary_source = "cache"
+        else:
+            # Generate new summary and store it
+            generated_summary = generate_summary(document)
+            store_generated_summary(client, index, generated_summary)
+            summary_source = "generated"
 
         return SummaryResponse(
             document=document,
             generated_summary=generated_summary,
             ground_truth_summary=ground_truth_summary,
+            summary_source=summary_source,
         )
 
     except Exception as e:
