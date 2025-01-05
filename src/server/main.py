@@ -110,7 +110,7 @@ async def startup_event():
 @app.get("/")
 async def hello() -> str:
     """Endpoint to return a greeting message."""
-    return {"message": "Hello, this API is to showcase Vertex AI based summarization!"}
+    return "Hello, this API is to showcase Vertex AI based summarization!"
 
 
 @app.get("/summarize/{index}", response_model=SummaryResponse)
